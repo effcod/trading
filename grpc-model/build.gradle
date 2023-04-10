@@ -1,0 +1,72 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.8'
+    }
+}
+
+plugins {
+    // Apply the scala plugin to add support for Scala
+    id 'com.google.protobuf' version '0.8.19'
+    id 'scala'
+}
+
+//tasks.withType(ScalaCompile) {
+//    scalaCompileOptions.additionalParameters = ["-Ytasty-reader"]
+//}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.scala-lang:scala-library:2.13.8'
+    //implementation 'org.scala-lang.modules:scala-xml_2.13:2.1.0'
+    implementation "com.thesamet.scalapb:scalapb-runtime_2.13:${scalapbVersion}"
+    implementation "com.thesamet.scalapb:scalapb-runtime-grpc_2.13:${scalapbVersion}"
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.21.7'
+    }
+    plugins {
+        scalapb {
+            artifact = (org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem().isWindows()) ?
+                    "com.thesamet.scalapb:protoc-gen-scala:${scalapbVersion}:windows@bat" :
+                    "com.thesamet.scalapb:protoc-gen-scala:${scalapbVersion}:unix@sh"
+        }
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.plugins {
+                scalapb {
+                    // add any ScalaPB generator options here. See: https://scalapb.github.io/scalapbc.html#passing-generator-parameters
+                     option 'grpc'
+                }
+            }
+        }
+    }
+}
+
+task run(type: JavaExec, dependsOn: classes) {
+    main = 'cz.micro.model.proto'
+    classpath sourceSets.main.runtimeClasspath
+    classpath configurations.runtime
+}
+
+// Add geneated Scala code as a source directory
+sourceSets {
+    main {
+        scala {
+            srcDirs "${protobuf.generatedFilesBaseDir}/main/"
+            //srcDirs "src/main/scala"
+        }
+    }
+}

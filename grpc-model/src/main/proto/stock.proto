@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package cz.micro.proto.dp;
+import "timeframe.proto";
+import "google/protobuf/timestamp.proto";
+
+// The stock service definition.
+service StockStreaming {
+  // Sends a greeting
+  rpc StreamStock(stream StockRequest) returns (stream StockReply) {}
+  rpc SingleStock(StockRequest) returns (StockReply) {}
+}
+
+// The request message containing the user's name.
+message StockRequest {
+  repeated string symbols = 1;
+  TimeFrame timeFrame = 2;
+  google.protobuf.Timestamp from = 3;
+  optional google.protobuf.Timestamp to = 4;
+}
+
+message StockData {
+  string symbol = 1;
+  google.protobuf.Timestamp dateTime = 2;
+  double open = 3;
+  double high = 4;
+  double low = 5;
+  double close = 6;
+  uint64 volume = 7;
+}
+
+message StockReply {
+  repeated StockData data = 1;
+}

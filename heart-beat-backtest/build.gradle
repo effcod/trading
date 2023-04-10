@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+	id 'scala'
+    id 'application'
+}
+
+mainClassName = 'app.Main'
+
+dependencies {
+    implementation project(':grpc-model')
+    //implementation 'org.scala-lang:scala3-library_3:3.2.0'
+    implementation 'org.scala-lang:scala-library:2.13.8'
+    implementation 'io.grpc:grpc-protobuf:1.49.1'
+    implementation 'io.grpc:grpc-stub:1.49.1'
+    implementation "com.thesamet.scalapb:scalapb-runtime_2.13:${scalapbVersion}"
+    implementation "com.thesamet.scalapb:scalapb-runtime-grpc_2.13:${scalapbVersion}"
+    implementation 'com.typesafe.scala-logging:scala-logging_2.13:3.9.5'
+    runtimeOnly 'io.grpc:grpc-netty:1.49.1'
+}
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'app.Main'
+    }
+    baseName = 'executable'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

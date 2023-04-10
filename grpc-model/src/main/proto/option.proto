@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package cz.micro.proto.dp;
+import "timeframe.proto";
+import "google/protobuf/timestamp.proto";
+
+// The stock service definition.
+service OptionStreaming {
+  // Sends a greeting
+  rpc OptionStream(OptionRequest) returns (OptionReply) {}
+}
+
+// The request message containing the user's name.
+message OptionRequest {
+  repeated string symbols = 1;
+  TimeFrame timeFrame = 2;
+  google.protobuf.Timestamp from = 3;
+  optional google.protobuf.Timestamp to = 4;
+  optional double strike = 5;
+  optional double expiration = 6;
+  optional string optionType = 7;
+}
+
+message OptionData {
+    string symbol = 1;
+    string optionType = 2;
+    double strike = 3;
+    string expiration = 4;
+    google.protobuf.Timestamp date = 5;
+    optional double bid = 6;
+    optional double ask = 7;
+    optional double last = 8;
+    optional uint32 volume = 9;
+    optional uint32 oi = 10;
+    optional double delta = 11;
+    optional double gamma = 12;
+}
+
+
+message OptionReply {
+  repeated OptionData options = 1;
+}

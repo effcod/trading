@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+dependencies {
+    implementation 'org.scala-lang:scala-library:2.13.8'
+}
+
+task customFatJar(type: Jar) {
+    baseName = 'executable'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

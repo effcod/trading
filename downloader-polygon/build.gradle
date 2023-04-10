@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+mainClassName = 'app.Main'
+
+dependencies {
+    implementation 'org.scala-lang:scala-library:2.13.8'
+
+    //implementation 'com.twitter.finagle:finagle-http_2.13:21.9.0'
+    implementation 'com.twitter:finatra-http_2.13:20.12.0'
+    implementation 'com.twitter:finatra-jackson_2.13:20.12.0'
+}
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'app.Main'
+    }
+    baseName = 'executable'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

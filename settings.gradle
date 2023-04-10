@@ -1,0 +1,8 @@
+rootProject.name = 'micro'
+
+include 'grpc-model'
+include 'dp-database'
+include 'downloader-polygon'
+include 'heart-beat-backtest'
+include 'strategy-base'
+include 'strategy-covered-call'

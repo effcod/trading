@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package cz.micro.proto.dp;
+import "timeframe.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+//https://www.metamorphant.de/blog/posts/2022-02-15-grpc-java-streaming-without-blocking-threads/
+service HeartBeatSubscriptionService {
+  rpc Subscribe(HeartBeatSubscription) returns (HeartBeatSubscribeReply) {}
+  rpc Unsubscribe(HeartBeatUnsubscription) returns (HeartBeatSubscribeReply) {}
+}
+
+service HeartBeatService {
+  rpc Stream(HeartBeatMessage) returns()
+}
+
+message HeartBeatSubscription {
+  string id = 1;
+  TimeFrame timeFrame = 2;
+  string ip = 3;
+  int32 port = 4;
+}
+
+message HeartBeatUnsubscription {
+  string id = 1;
+}
+
+message HeartBeatMessage {
+  google.protobuf.Timestamp dateTime = 1;
+}
+
+message HeartBeatSubscribeReply {
+  bool success = 1;
+  optional string message = 2;
+}
